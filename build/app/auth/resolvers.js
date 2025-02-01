@@ -95,6 +95,13 @@ const mutations = {
             });
             yield redis_1.emailVerificationClient.del(email);
             const userToken = JWTService_1.default.generateTokenForUser({ id: user.id, username: user.username });
+            ctx.res.cookie('__FlowTune_Token', userToken, {
+                httpOnly: true,
+                secure: true,
+                maxAge: 1000 * 60 * 60 * 24,
+                sameSite: 'none',
+                path: '/',
+            });
             NodeMailerService_1.default.sendWelcomeEmail(email, (user === null || user === void 0 ? void 0 : user.username) || "");
             return Object.assign(Object.assign({}, user), { authToken: userToken });
         }
