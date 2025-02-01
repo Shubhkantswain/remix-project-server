@@ -13,7 +13,7 @@ export async function initServer() {
 
     // CORS configuration
     const corsOptions = {
-        origin: ['http://localhost:5173'], // your frontend URL
+        origin: ['https://remix-project-plum.vercel.app'], // your frontend URL
         credentials: true, // Ensure cookies are sent with cross-origin requests
     };
 
