@@ -72,7 +72,7 @@ const mutations = {
 
             const cachedToken = await emailVerificationClient.get(email)
             console.log("cachedToken", cachedToken);
-            
+
             if (!cachedToken) {
                 throw new Error('Verification Token has been expired.');
             } else {
@@ -96,14 +96,6 @@ const mutations = {
             await emailVerificationClient.del(email)
 
             const userToken = JWTService.generateTokenForUser({ id: user.id, username: user.username });
-
-            ctx.res.cookie('__FlowTune_Token', userToken, {
-                httpOnly: true,
-                secure: true,
-                maxAge: 1000 * 60 * 60 * 24,
-                sameSite: 'none',
-                path: '/',
-            });
 
             NodeMailerService.sendWelcomeEmail(email, user?.username || "");
 
@@ -231,6 +223,20 @@ const mutations = {
             throw new Error(error.message);
         }
     },
+    setCookie: async (parent: any, { authToken }: { authToken: string }, ctx: GraphqlContext) => {
+        try {
+            ctx.res.cookie('__FlowTune_Token', authToken, {
+                httpOnly: true,
+                secure: true,
+                maxAge: 1000 * 60 * 60 * 24,
+                sameSite: 'none',
+                path: '/',
+            });
+            return true
+        } catch (error: any) {
+            throw new Error(error.message);
+        }
+    }
 
 }
 
