@@ -4,18 +4,14 @@ import { v2 as cloudinary } from 'cloudinary';
 
 const queries = {
     getFeedTracks: async (_parent: any, _args: any, _ctx: GraphqlContext) => {
-        const tracks = await prismaClient.track.findMany();
-
-        return tracks.map((track) => ({
-            id: track.id,
-            title: track.title,
-            artist: track.artist,
-            duration: track.duration.toString(), // Ensure consistent format
-            coverImageUrl: track.coverImageUrl || null, // Handle optional fields
-            audioFileUrl: track.audioFileUrl,
-            hasLiked: true, // Hardcoded for now
-            authorName: "me", // Hardcoded for now
-        }));
+      return [{  id: "track.id",
+        title:"track.title",
+        artist: "track.artist",
+        duration: "track.duration.toString()", // Ensure consistent format
+        coverImageUrl: "track.coverImageUrl || null", // Handle optional fields
+        audioFileUrl:" track.audioFileUrl",
+        hasLiked: true, // Hardcoded for now
+        authorName: "me", }]
     },
 }
 
