@@ -14,6 +14,7 @@ const db_1 = require("../../clients/db");
 const cloudinary_1 = require("cloudinary");
 const queries = {
     getFeedTracks: (_parent, _args, _ctx) => __awaiter(void 0, void 0, void 0, function* () {
+        yield new Promise((resolve) => setTimeout(resolve, 30000));
         const tracks = yield db_1.prismaClient.track.findMany();
         return tracks.map((track) => ({
             id: track.id,
