@@ -10,11 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
-// import { cloudinaryConfig } from "./config/cloudinary"
+const cloudinary_1 = require("./config/cloudinary");
 function init() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = yield (0, app_1.initServer)();
-        // cloudinaryConfig()
+        (0, cloudinary_1.cloudinaryConfig)();
         app.listen(4000, () => console.log("server started at port: " + 4000));
     });
 }

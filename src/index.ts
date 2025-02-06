@@ -1,9 +1,9 @@
 import { initServer } from "./app"
-// import { cloudinaryConfig } from "./config/cloudinary"
+import { cloudinaryConfig } from "./config/cloudinary"
 
 async function init() {
     const app = await initServer()
-    // cloudinaryConfig()
+    cloudinaryConfig()
     app.listen(4000, () => console.log("server started at port: " + 4000))
 }
 

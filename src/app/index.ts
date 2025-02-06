@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser'
 import JWTService from '../services/JWTService';
 import { GraphqlContext } from '../interfaces';
 import { Auth } from './auth';
+import { Track } from './track';
 
 export async function initServer() {
     const app = express();
@@ -25,22 +26,27 @@ export async function initServer() {
     const graphqlServer = new ApolloServer({
         typeDefs: `
             ${Auth.types}
+            ${Track.types}
 
             type Query {
                 ${Auth.queries}
+                ${Track.queries}
             }
             
             type Mutation {
                 ${Auth.mutations}
+                ${Track.mutations}
             }
         `,
         resolvers: {
             Query: {
                 ...Auth.resolvers.queries,
+                ...Track.resolvers.queries
             },
 
             Mutation: {
                 ...Auth.resolvers.mutations,
+                ...Track.resolvers.mutations
             }
         },
     });

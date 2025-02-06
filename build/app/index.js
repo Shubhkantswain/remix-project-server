@@ -21,6 +21,7 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const JWTService_1 = __importDefault(require("../services/JWTService"));
 const auth_1 = require("./auth");
+const track_1 = require("./track");
 function initServer() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = (0, express_1.default)();
@@ -36,18 +37,21 @@ function initServer() {
         const graphqlServer = new server_1.ApolloServer({
             typeDefs: `
             ${auth_1.Auth.types}
+            ${track_1.Track.types}
 
             type Query {
                 ${auth_1.Auth.queries}
+                ${track_1.Track.queries}
             }
             
             type Mutation {
                 ${auth_1.Auth.mutations}
+                ${track_1.Track.mutations}
             }
         `,
             resolvers: {
-                Query: Object.assign({}, auth_1.Auth.resolvers.queries),
-                Mutation: Object.assign({}, auth_1.Auth.resolvers.mutations)
+                Query: Object.assign(Object.assign({}, auth_1.Auth.resolvers.queries), track_1.Track.resolvers.queries),
+                Mutation: Object.assign(Object.assign({}, auth_1.Auth.resolvers.mutations), track_1.Track.resolvers.mutations)
             },
         });
         yield graphqlServer.start();
