@@ -14,14 +14,17 @@ const db_1 = require("../../clients/db");
 const cloudinary_1 = require("cloudinary");
 const queries = {
     getFeedTracks: (_parent, _args, _ctx) => __awaiter(void 0, void 0, void 0, function* () {
-        return [{ id: "track.id",
-                title: "track.title",
-                artist: "track.artist",
-                duration: "track.duration.toString()", // Ensure consistent format
-                coverImageUrl: "track.coverImageUrl || null", // Handle optional fields
-                audioFileUrl: " track.audioFileUrl",
-                hasLiked: true, // Hardcoded for now
-                authorName: "me", }];
+        const tracks = yield db_1.prismaClient.track.findMany();
+        return tracks.map((track) => ({
+            id: track.id,
+            title: track.title,
+            artist: track.artist,
+            duration: track.duration.toString(), // Ensure consistent format
+            coverImageUrl: track.coverImageUrl || null, // Handle optional fields
+            audioFileUrl: track.audioFileUrl,
+            hasLiked: true, // Hardcoded for now
+            authorName: "me", // Hardcoded for now   
+        }));
     }),
 };
 const mutations = {
