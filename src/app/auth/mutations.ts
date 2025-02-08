@@ -5,4 +5,6 @@ export const mutations = `#graphql
     forgotPassword(usernameOrEmail: String!): Boolean!
     resetPassword(input: ResetPasswordInput!): Boolean!
     setCookie(authToken: String!): Boolean!
-`
+`           
+
+// jjjjjj
