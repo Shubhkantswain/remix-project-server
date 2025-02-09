@@ -4,7 +4,7 @@ import { v2 as cloudinary } from 'cloudinary';
 
 const queries = {
     getFeedTracks: async (_parent: any, _args: any, _ctx: GraphqlContext) => {
-        await new Promise((resolve) => setTimeout(resolve, 30000));
+        // await new Promise((resolve) => setTimeout(resolve, 30000));
 
         const tracks = await prismaClient.track.findMany();
 
