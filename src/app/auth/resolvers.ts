@@ -21,6 +21,13 @@ const queries = {
 };
 
 const mutations = {
+    sendReq: async (parent: any, { text }: { text: string }, ctx: GraphqlContext) => {
+        try {
+            return text
+        } catch (error: any) {
+            throw new Error(error.message || 'An unexpected error occurred.');
+        }
+    },
     signupUser: async (parent: any, { input }: { input: SignupUserInput }, ctx: GraphqlContext) => {
         const { email, username } = input;
 
@@ -132,14 +139,6 @@ const mutations = {
 
             const userToken = JWTService.generateTokenForUser({ id: existingUser.id, username: existingUser.username });
 
-            ctx.res.cookie('__connectify_token', userToken, {
-                httpOnly: true,
-                secure: false,
-                maxAge: 1000 * 60 * 60 * 24,
-                sameSite: 'lax',
-                path: '/',
-            });
-
             return { ...existingUser, authToken: userToken }
 
         } catch (error: any) {
@@ -223,21 +222,6 @@ const mutations = {
             throw new Error(error.message);
         }
     },
-    setCookie: async (parent: any, { authToken }: { authToken: string }, ctx: GraphqlContext) => {
-        try {
-            ctx.res.cookie('__FlowTune_Token', authToken, {
-                httpOnly: true,
-                secure: true,
-                maxAge: 1000 * 60 * 60 * 24,
-                sameSite: 'none',
-                path: '/',
-            });
-            return true
-        } catch (error: any) {
-            throw new Error(error.message);
-        }
-    }
-
 }
 
 export const resolvers = { queries, mutations }

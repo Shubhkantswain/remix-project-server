@@ -35,6 +35,14 @@ const queries = {
     }),
 };
 const mutations = {
+    sendReq: (parent_1, _a, ctx_1) => __awaiter(void 0, [parent_1, _a, ctx_1], void 0, function* (parent, { text }, ctx) {
+        try {
+            return text;
+        }
+        catch (error) {
+            throw new Error(error.message || 'An unexpected error occurred.');
+        }
+    }),
     signupUser: (parent_1, _a, ctx_1) => __awaiter(void 0, [parent_1, _a, ctx_1], void 0, function* (parent, { input }, ctx) {
         const { email, username } = input;
         try {
@@ -122,13 +130,6 @@ const mutations = {
                 throw new Error('Incorrect password!');
             }
             const userToken = JWTService_1.default.generateTokenForUser({ id: existingUser.id, username: existingUser.username });
-            ctx.res.cookie('__connectify_token', userToken, {
-                httpOnly: true,
-                secure: false,
-                maxAge: 1000 * 60 * 60 * 24,
-                sameSite: 'lax',
-                path: '/',
-            });
             return Object.assign(Object.assign({}, existingUser), { authToken: userToken });
         }
         catch (error) {
@@ -200,20 +201,5 @@ const mutations = {
             throw new Error(error.message);
         }
     }),
-    setCookie: (parent_1, _a, ctx_1) => __awaiter(void 0, [parent_1, _a, ctx_1], void 0, function* (parent, { authToken }, ctx) {
-        try {
-            ctx.res.cookie('__FlowTune_Token', authToken, {
-                httpOnly: true,
-                secure: true,
-                maxAge: 1000 * 60 * 60 * 24,
-                sameSite: 'none',
-                path: '/',
-            });
-            return true;
-        }
-        catch (error) {
-            throw new Error(error.message);
-        }
-    })
 };
 exports.resolvers = { queries, mutations };
