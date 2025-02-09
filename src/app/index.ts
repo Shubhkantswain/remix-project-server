@@ -12,7 +12,7 @@ import { Track } from './track';
 export async function initServer() {
     const app = express();
 
-    // CORS configuration
+    // CORS configuration     
     const corsOptions = {
         origin: ['https://flowtune-app.pages.dev', 'http://localhost:5173'], // your frontend URL
         credentials: true, // Ensure cookies are sent with cross-origin requests
