@@ -41,9 +41,9 @@ const mutations = {
                 throw new Error("Please Login/Signup first!");
             const { title, audioFileUrl, coverImageUrl, artist, duration } = payload;
             cloudinary_1.v2.config({
-                cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-                api_key: process.env.CLOUDINARY_API_KEY,
-                api_secret: process.env.CLOUDINARY_API_SECRET
+                cloud_name: "daz21loyl",
+                api_key: "921569451158952",
+                api_secret: "DaKPv48jbFFbjeIlujDgsEOXFdk"
             });
             // Upload audio URL to Cloudinary
             const uploadAudioResult = yield cloudinary_1.v2.uploader.upload(audioFileUrl, {
