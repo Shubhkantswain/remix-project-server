@@ -36,12 +36,6 @@ const mutations = {
 
             const { title, audioFileUrl, coverImageUrl, artist, duration } = payload;
 
-            cloudinary.config({ 
-                cloud_name: "daz21loyl", 
-                api_key: "921569451158952", 
-                api_secret: "DaKPv48jbFFbjeIlujDgsEOXFdk" 
-            });
-
             // Upload audio URL to Cloudinary
             const uploadAudioResult = await cloudinary.uploader.upload(audioFileUrl, {
                 resource_type: "auto",
