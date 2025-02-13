@@ -37,6 +37,14 @@ const mutations = {
             const uploadAudioResult = await cloudinary.uploader.upload(audioFileUrl, {
                 resource_type: "auto",
             });
+ 
+            // export const cloudinaryConfig = () =>  {
+                cloudinary.config({ 
+                    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+                    api_key: process.env.CLOUDINARY_API_KEY, 
+                    api_secret: process.env.CLOUDINARY_API_SECRET 
+                });
+            // }
 
             // Upload cover image URL to Cloudinary (if provided)
             let uploadImageResult = null;
@@ -73,6 +81,69 @@ const mutations = {
             // Handle errors gracefully
             console.error("Error creating track:", error);
             throw new Error(error.message || "An error occurred while creating the track.");
+        }
+    },
+
+    deleteTrack: async (
+        parent: any,
+        { trackId }: { trackId: string },
+        ctx: GraphqlContext
+    ) => {
+        try {
+            // Ensure the user is authenticated
+            if (!ctx.user) throw new Error("Please Login/Signup first!");
+
+            const track = await prismaClient.track.findUnique({ where: { id: trackId } })
+
+            if (!track) {
+                throw new Error("Post Doest exist!");
+            }
+
+            if (track.authorId.toString() != ctx.user.id.toString()) {
+                throw new Error("You cant delete someone else post!");
+            }
+
+            await prismaClient.track.delete({ where: { id: trackId } })
+
+            return true
+
+        } catch (error: any) {
+            // Handle errors gracefully (Cloudinary or Prisma issues)
+            console.error("Error toggling like:", error);
+            throw new Error(error.message || "An error occurred while toggling the like on the post.");
+        }
+    },
+
+    likeTrack: async (parent: any, { trackId }: { trackId: string }, ctx: GraphqlContext) => {
+        try {
+
+            if (!ctx.user) throw new Error("Please Login/Signup first");
+
+            // Attempt to delete the like (unlike the track)
+            await prismaClient.like.delete({
+                where: {
+                    userId_trackId: {
+                        userId: ctx.user.id,
+                        trackId,
+                    },
+                },
+            });
+            // If successful, return false (indicating the track is now unliked)
+            return false;
+
+        } catch (error: any) {
+            if (error.code === 'P2025') {
+                // Create a like if not found (toggle to liked)
+                await prismaClient.like.create({
+                    data: {
+                        userId: ctx?.user?.id || "",
+                        trackId,
+                    },
+                });
+                return true; // Indicate the track is now liked
+            }
+
+            throw new Error(error.message || "something went wrong");
         }
     },
 }
