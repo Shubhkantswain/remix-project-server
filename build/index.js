@@ -24,6 +24,7 @@ function init() {
             api_key: process.env.CLOUDINARY_API_KEY,
             api_secret: process.env.CLOUDINARY_API_SECRET
         });
+        console.log("process.env.CLOUDINARY_CLOUD_NAME", process.env.CLOUDINARY_CLOUD_NAME, "process.env.CLOUDINARY_API_KEY", process.env.CLOUDINARY_API_KEY, "process.env.CLOUDINARY_API_SECRET", process.env.CLOUDINARY_API_SECRET);
         app.listen(4000, () => console.log("server started at port: " + 4000));
     });
 }
