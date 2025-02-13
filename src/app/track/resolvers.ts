@@ -33,17 +33,18 @@ const mutations = {
 
             const { title, audioFileUrl, coverImageUrl, artist, duration } = payload;
 
+            cloudinary.config({ 
+                cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+                api_key: process.env.CLOUDINARY_API_KEY, 
+                api_secret: process.env.CLOUDINARY_API_SECRET 
+            });
+            
             // Upload audio URL to Cloudinary
             const uploadAudioResult = await cloudinary.uploader.upload(audioFileUrl, {
                 resource_type: "auto",
             });
  
             // export const cloudinaryConfig = () =>  {
-                cloudinary.config({ 
-                    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-                    api_key: process.env.CLOUDINARY_API_KEY, 
-                    api_secret: process.env.CLOUDINARY_API_SECRET 
-                });
             // }
 
             // Upload cover image URL to Cloudinary (if provided)

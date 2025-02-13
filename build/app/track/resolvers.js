@@ -35,16 +35,16 @@ const mutations = {
             if (!ctx.user)
                 throw new Error("Please Login/Signup first!");
             const { title, audioFileUrl, coverImageUrl, artist, duration } = payload;
-            // Upload audio URL to Cloudinary
-            const uploadAudioResult = yield cloudinary_1.v2.uploader.upload(audioFileUrl, {
-                resource_type: "auto",
-            });
-            // export const cloudinaryConfig = () =>  {
             cloudinary_1.v2.config({
                 cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
                 api_key: process.env.CLOUDINARY_API_KEY,
                 api_secret: process.env.CLOUDINARY_API_SECRET
             });
+            // Upload audio URL to Cloudinary
+            const uploadAudioResult = yield cloudinary_1.v2.uploader.upload(audioFileUrl, {
+                resource_type: "auto",
+            });
+            // export const cloudinaryConfig = () =>  {
             // }
             // Upload cover image URL to Cloudinary (if provided)
             let uploadImageResult = null;
