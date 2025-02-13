@@ -16,15 +16,15 @@ const app_1 = require("./app");
 const dotenv_1 = __importDefault(require("dotenv"));
 const cloudinary_1 = require("cloudinary");
 dotenv_1.default.config();
+cloudinary_1.v2.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+console.log("process.env.CLOUDINARY_CLOUD_NAME", process.env.CLOUDINARY_CLOUD_NAME, "process.env.CLOUDINARY_API_KEY", process.env.CLOUDINARY_API_KEY, "process.env.CLOUDINARY_API_SECRET", process.env.CLOUDINARY_API_SECRET);
 function init() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = yield (0, app_1.initServer)();
-        cloudinary_1.v2.config({
-            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-            api_key: process.env.CLOUDINARY_API_KEY,
-            api_secret: process.env.CLOUDINARY_API_SECRET
-        });
-        console.log("process.env.CLOUDINARY_CLOUD_NAME", process.env.CLOUDINARY_CLOUD_NAME, "process.env.CLOUDINARY_API_KEY", process.env.CLOUDINARY_API_KEY, "process.env.CLOUDINARY_API_SECRET", process.env.CLOUDINARY_API_SECRET);
         app.listen(4000, () => console.log("server started at port: " + 4000));
     });
 }
