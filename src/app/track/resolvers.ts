@@ -1,6 +1,9 @@
 import { prismaClient } from "../../clients/db";
 import { CreateTrackPayload, GraphqlContext } from "../../interfaces";
 import { v2 as cloudinary } from 'cloudinary';
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const queries = {
     getFeedTracks: async (_parent: any, _args: any, _ctx: GraphqlContext) => {
@@ -38,7 +41,7 @@ const mutations = {
                 api_key: process.env.CLOUDINARY_API_KEY, 
                 api_secret: process.env.CLOUDINARY_API_SECRET 
             });
-            
+
             // Upload audio URL to Cloudinary
             const uploadAudioResult = await cloudinary.uploader.upload(audioFileUrl, {
                 resource_type: "auto",
