@@ -1,3 +1,4 @@
+import { title } from "process";
 import { prismaClient } from "../../clients/db";
 import { CreateTrackPayload, GraphqlContext } from "../../interfaces";
 import { v2 as cloudinary } from 'cloudinary';
@@ -7,22 +8,76 @@ dotenv.config()
 
 const queries = {
     getFeedTracks: async (_parent: any, _args: any, _ctx: GraphqlContext) => {
-        // await new Promise((resolve) => setTimeout(resolve, 30000));
+        if (!_ctx.user) {
+            throw new Error("User not authenticated");
+        }
 
-        const tracks = await prismaClient.track.findMany();
+        const userId = _ctx.user.id; // Get the current user's ID
+
+        const tracks = await prismaClient.track.findMany({
+            include: {
+                likes: {
+                    where: {
+                        userId: userId
+                    }
+                }
+            }
+        });
 
         return tracks.map((track) => ({
             id: track.id,
             title: track.title,
             artist: track.artist,
-            duration: track.duration.toString(), // Ensure consistent format
-            coverImageUrl: track.coverImageUrl || null, // Handle optional fields
+            duration: track.duration.toString(),
+            coverImageUrl: track.coverImageUrl || null,
             audioFileUrl: track.audioFileUrl,
-            hasLiked: true, // Hardcoded for now
-            authorName: "me", // Hardcoded for now   
+            hasLiked: track.likes.length > 0, // Check if the user has liked the track
+            authorName: "me", // Assuming you want to show the author's name
         }));
     },
+
+   getLikedTracks: async (_parent: any, _args: any, _ctx: GraphqlContext) => {
+    if (!_ctx.user) {
+        throw new Error("User not authenticated");
+    }
+
+    try {
+        const likedTracks = await prismaClient.like.findMany({
+            where: {
+                userId: _ctx.user.id
+            },
+            select: {
+                track: {
+                    select: {
+                        id: true,
+                        title: true,
+                        artist: true,
+                        duration: true,
+                        coverImageUrl: true,
+                        audioFileUrl: true,
+                    }
+                }
+            }
+        });
+
+        return likedTracks.map(like => ({
+            id: like.track.id,
+            title: like.track.title,
+            artist: like.track.artist,
+            duration: like.track.duration,
+            coverImageUrl: like.track.coverImageUrl,
+            audioFileUrl: like.track.audioFileUrl,
+            hasLiked: true,
+            authorName: "me"
+        }));
+        
+    } catch (error) {
+        console.error("Error fetching liked tracks:", error);
+        throw new Error("Failed to fetch liked tracks");
+    }
 }
+};
+
 
 const mutations = {
     createTrack: async (
@@ -40,7 +95,7 @@ const mutations = {
             const uploadAudioResult = await cloudinary.uploader.upload(audioFileUrl, {
                 resource_type: "auto",
             });
- 
+
             // export const cloudinaryConfig = () =>  {
             // }
 

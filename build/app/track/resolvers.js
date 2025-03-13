@@ -19,19 +19,68 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const queries = {
     getFeedTracks: (_parent, _args, _ctx) => __awaiter(void 0, void 0, void 0, function* () {
-        // await new Promise((resolve) => setTimeout(resolve, 30000));
-        const tracks = yield db_1.prismaClient.track.findMany();
+        if (!_ctx.user) {
+            throw new Error("User not authenticated");
+        }
+        const userId = _ctx.user.id; // Get the current user's ID
+        const tracks = yield db_1.prismaClient.track.findMany({
+            include: {
+                likes: {
+                    where: {
+                        userId: userId
+                    }
+                }
+            }
+        });
         return tracks.map((track) => ({
             id: track.id,
             title: track.title,
             artist: track.artist,
-            duration: track.duration.toString(), // Ensure consistent format
-            coverImageUrl: track.coverImageUrl || null, // Handle optional fields
+            duration: track.duration.toString(),
+            coverImageUrl: track.coverImageUrl || null,
             audioFileUrl: track.audioFileUrl,
-            hasLiked: true, // Hardcoded for now
-            authorName: "me", // Hardcoded for now   
+            hasLiked: track.likes.length > 0, // Check if the user has liked the track
+            authorName: "me", // Assuming you want to show the author's name
         }));
     }),
+    getLikedTracks: (_parent, _args, _ctx) => __awaiter(void 0, void 0, void 0, function* () {
+        if (!_ctx.user) {
+            throw new Error("User not authenticated");
+        }
+        try {
+            const likedTracks = yield db_1.prismaClient.like.findMany({
+                where: {
+                    userId: _ctx.user.id
+                },
+                select: {
+                    track: {
+                        select: {
+                            id: true,
+                            title: true,
+                            artist: true,
+                            duration: true,
+                            coverImageUrl: true,
+                            audioFileUrl: true,
+                        }
+                    }
+                }
+            });
+            return likedTracks.map(like => ({
+                id: like.track.id,
+                title: like.track.title,
+                artist: like.track.artist,
+                duration: like.track.duration,
+                coverImageUrl: like.track.coverImageUrl,
+                audioFileUrl: like.track.audioFileUrl,
+                hasLiked: true,
+                authorName: "me"
+            }));
+        }
+        catch (error) {
+            console.error("Error fetching liked tracks:", error);
+            throw new Error("Failed to fetch liked tracks");
+        }
+    })
 };
 const mutations = {
     createTrack: (parent_1, _a, ctx_1) => __awaiter(void 0, [parent_1, _a, ctx_1], void 0, function* (parent, { payload }, ctx) {
