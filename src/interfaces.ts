@@ -40,5 +40,7 @@ export interface CreateTrackPayload {
     audioFileUrl: string;    // URL to the audio file, required
     coverImageUrl?: string;  // URL to the cover image, optional
     artist?: string;  // URL to the cover image, optional
+    language?: string;
+    genre?: string;
     duration: string
 }

@@ -47,6 +47,7 @@ const queries = {
         if (!_ctx.user) {
             throw new Error("User not authenticated");
         }
+        console.log("_ctx.user", _ctx.user);
         try {
             const likedTracks = yield db_1.prismaClient.like.findMany({
                 where: {
@@ -65,6 +66,17 @@ const queries = {
                     }
                 }
             });
+            const tracks = likedTracks.map(like => ({
+                id: like.track.id,
+                title: like.track.title,
+                artist: like.track.artist,
+                duration: like.track.duration,
+                coverImageUrl: like.track.coverImageUrl,
+                audioFileUrl: like.track.audioFileUrl,
+                hasLiked: true,
+                authorName: "me"
+            }));
+            console.log("tracks", tracks);
             return likedTracks.map(like => ({
                 id: like.track.id,
                 title: like.track.title,
@@ -88,7 +100,7 @@ const mutations = {
             // Ensure the user is authenticated
             if (!ctx.user)
                 throw new Error("Please Login/Signup first!");
-            const { title, audioFileUrl, coverImageUrl, artist, duration } = payload;
+            const { title, audioFileUrl, coverImageUrl, language, genre, artist, duration } = payload;
             // Upload audio URL to Cloudinary
             const uploadAudioResult = yield cloudinary_1.v2.uploader.upload(audioFileUrl, {
                 resource_type: "auto",
@@ -110,7 +122,9 @@ const mutations = {
                     duration,
                     audioFileUrl: uploadAudioResult.secure_url,
                     coverImageUrl: uploadImageResult === null || uploadImageResult === void 0 ? void 0 : uploadImageResult.secure_url,
-                    authorId: ctx.user.id, // Link track to the authenticated user
+                    language,
+                    genre,
+                    authorId: ctx.user.id,
                 },
             });
             return {

@@ -8,6 +8,7 @@ import JWTService from '../services/JWTService';
 import { GraphqlContext } from '../interfaces';
 import { Auth } from './auth';
 import { Track } from './track';
+import { User } from './user';
 
 export async function initServer() {
     const app = express();
@@ -27,10 +28,12 @@ export async function initServer() {
         typeDefs: `
             ${Auth.types}
             ${Track.types}
+            ${User.types}
 
             type Query {
                 ${Auth.queries}
                 ${Track.queries}
+                ${User.queries}
             }
             
             type Mutation {
@@ -41,7 +44,8 @@ export async function initServer() {
         resolvers: {
             Query: {
                 ...Auth.resolvers.queries,
-                ...Track.resolvers.queries
+                ...Track.resolvers.queries,
+                ...User.resolvers.queries
             },
 
             Mutation: {

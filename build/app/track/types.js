@@ -7,6 +7,8 @@ exports.types = `#graphql
         audioFileUrl: String!      
         coverImageUrl: String
         artist: String
+        language: String
+        genre: String
         duration: String!
     }
 

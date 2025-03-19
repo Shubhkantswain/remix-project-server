@@ -22,6 +22,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const JWTService_1 = __importDefault(require("../services/JWTService"));
 const auth_1 = require("./auth");
 const track_1 = require("./track");
+const user_1 = require("./user");
 function initServer() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = (0, express_1.default)();
@@ -38,10 +39,12 @@ function initServer() {
             typeDefs: `
             ${auth_1.Auth.types}
             ${track_1.Track.types}
+            ${user_1.User.types}
 
             type Query {
                 ${auth_1.Auth.queries}
                 ${track_1.Track.queries}
+                ${user_1.User.queries}
             }
             
             type Mutation {
@@ -50,7 +53,7 @@ function initServer() {
             }
         `,
             resolvers: {
-                Query: Object.assign(Object.assign({}, auth_1.Auth.resolvers.queries), track_1.Track.resolvers.queries),
+                Query: Object.assign(Object.assign(Object.assign({}, auth_1.Auth.resolvers.queries), track_1.Track.resolvers.queries), user_1.User.resolvers.queries),
                 Mutation: Object.assign(Object.assign({}, auth_1.Auth.resolvers.mutations), track_1.Track.resolvers.mutations)
             },
         });

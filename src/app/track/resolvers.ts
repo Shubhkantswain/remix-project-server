@@ -36,46 +36,61 @@ const queries = {
         }));
     },
 
-   getLikedTracks: async (_parent: any, _args: any, _ctx: GraphqlContext) => {
-    if (!_ctx.user) {
-        throw new Error("User not authenticated");
-    }
+    getLikedTracks: async (_parent: any, _args: any, _ctx: GraphqlContext) => {
+        if (!_ctx.user) {
+            throw new Error("User not authenticated");
+        }
 
-    try {
-        const likedTracks = await prismaClient.like.findMany({
-            where: {
-                userId: _ctx.user.id
-            },
-            select: {
-                track: {
-                    select: {
-                        id: true,
-                        title: true,
-                        artist: true,
-                        duration: true,
-                        coverImageUrl: true,
-                        audioFileUrl: true,
+        console.log("_ctx.user", _ctx.user);
+
+        try {
+            const likedTracks = await prismaClient.like.findMany({
+                where: {
+                    userId: _ctx.user.id
+                },
+                select: {
+                    track: {
+                        select: {
+                            id: true,
+                            title: true,
+                            artist: true,
+                            duration: true,
+                            coverImageUrl: true,
+                            audioFileUrl: true,
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        return likedTracks.map(like => ({
-            id: like.track.id,
-            title: like.track.title,
-            artist: like.track.artist,
-            duration: like.track.duration,
-            coverImageUrl: like.track.coverImageUrl,
-            audioFileUrl: like.track.audioFileUrl,
-            hasLiked: true,
-            authorName: "me"
-        }));
-        
-    } catch (error) {
-        console.error("Error fetching liked tracks:", error);
-        throw new Error("Failed to fetch liked tracks");
+            const tracks = likedTracks.map(like => ({
+                id: like.track.id,
+                title: like.track.title,
+                artist: like.track.artist,
+                duration: like.track.duration,
+                coverImageUrl: like.track.coverImageUrl,
+                audioFileUrl: like.track.audioFileUrl,
+                hasLiked: true,
+                authorName: "me"
+            }))
+
+            console.log("tracks", tracks);
+
+            return likedTracks.map(like => ({
+                id: like.track.id,
+                title: like.track.title,
+                artist: like.track.artist,
+                duration: like.track.duration,
+                coverImageUrl: like.track.coverImageUrl,
+                audioFileUrl: like.track.audioFileUrl,
+                hasLiked: true,
+                authorName: "me"
+            }));
+
+        } catch (error) {
+            console.error("Error fetching liked tracks:", error);
+            throw new Error("Failed to fetch liked tracks");
+        }
     }
-}
 };
 
 
@@ -89,7 +104,7 @@ const mutations = {
             // Ensure the user is authenticated
             if (!ctx.user) throw new Error("Please Login/Signup first!");
 
-            const { title, audioFileUrl, coverImageUrl, artist, duration } = payload;
+            const { title, audioFileUrl, coverImageUrl, language, genre, artist, duration } = payload;
 
             // Upload audio URL to Cloudinary
             const uploadAudioResult = await cloudinary.uploader.upload(audioFileUrl, {
@@ -115,7 +130,9 @@ const mutations = {
                     duration,
                     audioFileUrl: uploadAudioResult.secure_url,
                     coverImageUrl: uploadImageResult?.secure_url,
-                    authorId: ctx.user.id, // Link track to the authenticated user
+                    language,
+                    genre,
+                    authorId: ctx.user.id,
                 },
             });
 
