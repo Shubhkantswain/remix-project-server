@@ -6,6 +6,11 @@ interface GetUserTracksPayload {
   page: number;
 }
 
+interface GetUserTracksPahhhhhyload {
+  username: string;
+  page: number;
+}
+
 export const queries = {
   getUserProfile: async (
     parent: any,
@@ -100,7 +105,7 @@ export const queries = {
       // audioFileUrl            
       // hasLiked 
       // authorName
-      
+
       return tracks.map((track) => ({
         id: track.id,
         title: track.title,
